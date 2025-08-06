@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard | Secure Trust Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <style>
+      body {
+        background: linear-gradient(to bottom right, #f0fdf4, #e0f7fa);
+      }
+      .dark body {
+        background: #0f172a;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+      }
+      .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(100, 116, 139, 0.4);
+      }
+    </style>
+
+    <script>
+      // Apply saved theme on page load
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+      } else if (!localStorage.getItem("theme")) {
+        // Default to system preference
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      }
+
+      // Toggle theme + persist
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      }
+    </script>
+  </head>
+  <body
+    class="relative min-h-screen p-6 text-slate-800 dark:text-slate-100 transition duration-300"
+  >
+    <!-- Dark mode toggle -->
+    <div class="absolute top-4 right-6 z-10">
+      <button
+        onclick="toggleTheme()"
+        class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+      >
+        Switch Theme
+      </button>
+    </div>
+
+    <!-- Main Dashboard Card -->
+    <div
+      class="relative max-w-md mx-auto mt-12 glass-card rounded-3xl shadow-2xl p-6 text-center"
+    >
+      <!-- Home Button -->
+      <a
+        href="/user_logout"
+        onclick="return confirm('Are you sure you want to logout?')"
+        class="absolute top-2 left-2 px-3 py-1 text-sm text-red-600 rounded-md hover:bg-red-100 hover:text-red-800 transition"
+      >
+        Logout
+      </a>
+
+      <h1 class="text-2xl font-bold text-indigo-700 dark:text-indigo-300 mb-2">
+        Welcome {{ user[0] }}
+      </h1>
+      <p class="text-md text-gray-600 dark:text-gray-300 mb-2">
+        Account Number: {{ acc_no }}
+      </p>
+      <p class="text-lg text-green-600 dark:text-green-400 font-semibold mb-6">
+        Available Balance: ₹{{ user[1] }}
+      </p>
+
+      <!-- Deposit Form -->
+      <form action="/deposit" method="POST" class="mb-6 space-y-4">
+        <input
+          type="number"
+          name="amount"
+          min="1"
+          required
+          placeholder="Deposit Amount"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <button
+          class="w-full bg-green-600 text-white py-2 rounded-xl font-semibold hover:bg-green-700 transition"
+        >
+          Deposit
+        </button>
+      </form>
+
+      <!-- Withdraw Form -->
+      <form action="/withdraw" method="POST" class="mb-6 space-y-4">
+        <input
+          type="number"
+          name="amount"
+          min="1"
+          required
+          placeholder="Withdraw Amount"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+        <button
+          class="w-full bg-red-600 text-white py-2 rounded-xl font-semibold hover:bg-red-700 transition"
+        >
+          Withdraw
+        </button>
+      </form>
+
+      <!-- Passbook & Delete -->
+      <div
+        class="flex flex-col sm:flex-row justify-center items-center gap-6 mt-4"
+      >
+        <a
+          href="/passbook"
+          class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline"
+        >
+          📘 View Passbook
+        </a>
+        <a
+          href="/transfer"
+          class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline"
+        >
+          💸 Transfer Money
+        </a>
+        <form action="/delete_account" method="POST">
+          <button
+            onclick="return confirm('Are you sure to delete account?')"
+            class="text-red-600 dark:text-red-400 font-semibold hover:underline"
+          >
+            ❌ Delete Account
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/session_checker.js') }}"></script>
+    <script>
+      setupSessionExpiry("{{ expires_at }}");
+    </script>
+
+  </body>
+</html>

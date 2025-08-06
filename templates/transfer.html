@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Transfer Money | Secure Trust Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+    };
+    </script>
+    <style>
+    body {
+        background: linear-gradient(to bottom right, #f0f9ff, #e6ffe6);
+    }
+    .dark body {
+        background: #0f172a;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+    }
+    .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(100, 116, 139, 0.4);
+    }
+    </style>
+
+    <script>
+    if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+    } else if (!localStorage.getItem("theme")) {
+        const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        } else {
+        localStorage.setItem("theme", "light");
+        }
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+    </script>
+</head>
+
+<body
+    class="relative min-h-screen flex items-center justify-center p-6 text-slate-800 dark:text-slate-100 transition duration-300"
+>
+    <!-- Theme toggle -->
+    <div class="absolute top-4 right-6 z-10">
+    <button
+        onclick="toggleTheme()"
+        class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+    >
+        Switch Theme
+    </button>
+    </div>
+
+    <!-- Transfer Card -->
+    <div
+    class="glass-card w-full max-w-md p-8 rounded-2xl shadow-2xl text-center"
+    >
+    <!-- Back to Dashboard -->
+    <a
+        href="/dashboard"
+        class="absolute top-2 left-2 px-3 py-1 text-sm text-teal-600 rounded-md hover:bg-teal-100 hover:text-teal-800 transition"
+    >
+        ← Dashboard
+    </a>
+
+    <h2 class="text-2xl font-bold text-teal-700 dark:text-teal-300 mb-6">
+        💸 Fund Transfer
+    </h2>
+
+    <form method="POST" onsubmit="return confirmTransfer()" class="space-y-4">
+        <input
+        type="text"
+        name="receiver"
+        placeholder="Receiver's 10-digit Account Number"
+        maxlength="10" 
+        pattern="\d{10}" 
+        required
+        class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <input
+        type="number"
+        name="amount"
+        placeholder="Amount (₹)"
+        required
+        min="1"
+        class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <button
+        type="submit"
+        class="w-full bg-teal-600 text-white py-2 rounded-xl font-semibold hover:bg-teal-700 transition"
+        >
+        Transfer Money
+        </button>
+
+    </form>
+    </div>
+
+    <script>
+    function confirmTransfer() {
+        const receiver = document.querySelector('input[name="receiver"]').value;
+        const amount = document.querySelector('input[name="amount"]').value;
+
+        if (!receiver || !amount || amount <= 0) {
+        alert("Please enter valid account number and amount.");
+        return false;
+        }
+
+        return confirm(`Are you sure you want to transfer ₹${amount} to A/C ${receiver}?`);
+    }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/session_checker.js') }}"></script>
+    <script>
+        setupSessionExpiry("{{ expires_at }}");
+    </script>
+
+</body>
+</html>

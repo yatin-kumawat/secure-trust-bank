@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Account Created | Secure Trust Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <style>
+      body {
+        background: linear-gradient(to bottom right, #f0fdf4, #e0f2fe);
+      }
+      .dark body {
+        background: #0f172a;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+      }
+      .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7); /* slate-800 */
+        border: 1px solid rgba(100, 116, 139, 0.4);
+      }
+    </style>
+
+    <script>
+      // Apply saved theme on page load
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+      } else if (!localStorage.getItem("theme")) {
+        // Default to system preference
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      }
+
+      // Toggle theme + persist
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      }
+    </script>
+  </head>
+  <body
+    class="relative min-h-screen flex items-center justify-center p-6 text-slate-800 transition duration-300 dark:text-slate-100"
+  >
+    <!-- Dark mode toggle -->
+    <div class="absolute top-4 right-6 z-10">
+      <button
+        onclick="toggleTheme()"
+        class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+      >
+        Switch Theme
+      </button>
+    </div>
+
+    <!-- Main Card -->
+    <div
+      class="w-full max-w-md glass-card p-8 rounded-2xl shadow-2xl text-center"
+    >
+      <h2 class="text-2xl font-bold text-green-700 dark:text-green-400 mb-3">
+        🎉 Account Created Successfully
+      </h2>
+
+      <p class="text-lg">Your Account Number:</p>
+      <p class="font-mono text-xl text-gray-800 dark:text-white mb-2">
+        {{ acc_no }}
+      </p>
+
+      <p class="text-lg">Your 4-digit PIN:</p>
+      <p class="font-mono text-xl text-gray-800 dark:text-white mb-4">
+        {{ pin }}
+      </p>
+
+      <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+        Please note these details securely.
+      </p>
+
+      <a
+        href="/"
+        class="inline-block mt-6 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+      >
+        ← Back to Home
+      </a>
+    </div>
+  </body>
+</html>

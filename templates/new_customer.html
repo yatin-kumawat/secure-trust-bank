@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create New Account | Secure Trust Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/js/validation.js" defer></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <style>
+      body {
+        background: linear-gradient(to bottom right, #f0f9ff, #e6ffe6);
+      }
+      .dark body {
+        background: #0f172a;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+      }
+      .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7); /* slate-800 */
+        border: 1px solid rgba(100, 116, 139, 0.4);
+      }
+    </style>
+
+    <script>
+      // Apply saved theme on page load
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+      } else if (!localStorage.getItem("theme")) {
+        // Default to system preference
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      }
+
+      // Toggle theme + persist
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      }
+    </script>
+  </head>
+  <body
+    class="relative min-h-screen flex items-center justify-center p-6 text-slate-800 transition duration-300 dark:text-slate-100"
+  >
+    <!-- Dark mode toggle -->
+    <div class="absolute top-4 right-6 z-10">
+      <button
+        onclick="toggleTheme()"
+        class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+      >
+        Switch Theme
+      </button>
+    </div>
+
+    <!-- Main card -->
+    <div
+      class="relative w-full max-w-xl glass-card rounded-3xl shadow-2xl px-8 py-10"
+    >
+      <!-- Back to Home -->
+      <a
+        href="/"
+        class="absolute top-2 left-2 px-3 py-1 text-sm text-teal-600 rounded-md hover:bg-teal-100 hover:text-teal-800 transition"
+      >
+        ← Home
+      </a>
+
+      <h2
+        class="text-3xl font-bold text-center text-teal-700 dark:text-teal-300 mb-8"
+      >
+        🧾 Open a New Bank Account
+      </h2>
+
+      <form
+        id="createForm"
+        action="/create_account"
+        method="POST"
+        class="space-y-4"
+      >
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name (e.g., Yatin Kumawat)"
+          required
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="nameError" class="text-sm text-red-500 mt-1 hidden">Name must be at least 3 characters and only letters.</p>
+
+        <input
+          type="text"
+          name="city"
+          placeholder="City (e.g., Jaipur)"
+          required
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="cityError" class="error-msg">City name must be valid.</p>
+
+        <input
+        type="date"
+        name="dob"
+        placeholder="Date of Birth"
+        required
+        class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="dobError" class="text-sm text-red-500 hidden mt-1">You must be at least 18 years old.</p>
+
+        <div class="relative">
+          <select
+            name="gender"
+            required
+            class="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
+          >
+            <option value="" disabled selected hidden>
+              Select Gender
+            </option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <div
+            class="pointer-events-none absolute right-3 top-3 text-gray-500 dark:text-gray-400"
+          >
+            ▼
+          </div>
+          <p id="genderError" class="error-msg">Please select your gender.</p>
+        </div>
+
+
+        <!-- Styled dropdown -->
+        <div class="relative">
+          <select
+            name="account"
+            required
+            class="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
+          >
+            <option value="" disabled selected hidden>
+              Select Account Type
+            </option>
+            <option value="Savings">Savings</option>
+            <option value="Current">Current</option>
+          </select>
+          <div
+            class="pointer-events-none absolute right-3 top-3 text-gray-500 dark:text-gray-400"
+          >
+            ▼
+          </div>
+          <p id="accountError" class="error-msg">Please select account type.</p>
+        </div>
+
+        <input
+          type="number"
+          name="amount"
+          min="1"
+          required
+          placeholder="Initial Deposit (₹)"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="amountError" class="error-msg">Minimum balance required.</p>
+
+        <input
+          type="text"
+          name="mobile"
+          placeholder="10-digit Mobile No."
+          maxlength="10"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="mobileError" class="error-msg">Enter valid 10-digit mobile number.</p>
+
+        <input
+          type="password"
+          name="pin"
+          placeholder="4-digit PIN"
+          required
+          maxlength="4"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="pinError" class="error-msg">PIN must be exactly 4 digits.</p>
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-slate-700 dark:text-white"
+        />
+        <p id="emailError" class="error-msg">Enter a valid email address.</p>
+
+        <button
+          type="submit"
+          id="submitBtn"
+          disabled
+          class="w-full bg-teal-600 text-white py-2 rounded-xl font-semibold transition hover:bg-teal-700 disabled:bg-gray-400 dark:disabled:bg-slate-600"
+        >
+          Create Account
+        </button>
+      </form>
+    </div>
+
+    <style>
+      .input {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid #cbd5e1;
+        background: white;
+        color: #1e293b;
+        outline: none;
+      }
+      .dark .input {
+        background: #334155;
+        color: white;
+      }
+      .input:focus {
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 2px #5eead4;
+      }
+      .error-msg {
+        display: none;
+        font-size: 0.875rem;
+        color: #dc2626;
+        margin-top: 0.25rem;
+      }
+      .error-msg:not(.hidden) {
+        display: block;
+      }
+    </style>
+
+  </body>
+</html>

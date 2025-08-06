@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Transfer Successful | Secure Trust Bank</title>
+    <meta http-equiv="refresh" content="5;url=/dashboard" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: "class",
+    };
+    </script>
+    <style>
+    body {
+        background: linear-gradient(to bottom right, #f0fdf4, #e0f7fa);
+    }
+    .dark body {
+        background: #0f172a;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+    }
+    .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(100, 116, 139, 0.4);
+    }
+    </style>
+
+    <script>
+    if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+    } else if (!localStorage.getItem("theme")) {
+        const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        } else {
+        localStorage.setItem("theme", "light");
+        }
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+    </script>
+</head>
+<body
+    class="relative min-h-screen flex items-center justify-center px-6 text-slate-800 dark:text-slate-100 transition duration-300"
+>
+    <!-- Theme Toggle -->
+    <div class="absolute top-4 right-6 z-10">
+    <button
+        onclick="toggleTheme()"
+        class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+    >
+        Switch Theme
+    </button>
+    </div>
+
+    <!-- Success Card -->
+    <div class="glass-card shadow-xl p-8 rounded-2xl text-center max-w-md">
+    <div class="text-5xl text-green-500 mb-3">✅</div>
+    <h2 class="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
+        Transfer Completed Successfully
+    </h2>
+    <p class="text-gray-700 dark:text-gray-300 mb-4">
+        You will be redirected to your dashboard shortly.
+    </p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+        (If not,
+        <a href="/dashboard" class="text-blue-600 dark:text-blue-400 underline"
+        >click here</a
+        >.)
+    </p>
+    </div>
+</body>
+</html>

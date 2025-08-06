@@ -1,0 +1,5 @@
+Flask
+Flask-Session
+mysql-connector-python
+python-dotenv
+reportlab

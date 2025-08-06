@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Verify Email | Secure Trust Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <style>
+      body {
+        background: linear-gradient(to bottom right, #f0f9ff, #e6ffe6);
+      }
+      .dark body {
+        background: #0f172a;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(200, 200, 255, 0.2);
+      }
+      .dark .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(100, 116, 139, 0.4);
+      }
+    </style>
+    <script>
+      // Apply saved theme on page load
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.classList.add("dark");
+      } else if (!localStorage.getItem("theme")) {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      }
+
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      }
+    </script>
+  </head>
+  <body class="relative min-h-screen flex items-center justify-center p-6 text-slate-800 transition duration-300 dark:text-slate-100">
+    <!-- Theme toggle -->
+    <div class="absolute top-4 right-6 z-10">
+      <button onclick="toggleTheme()" class="px-3 py-1 text-sm rounded-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+        Switch Theme
+      </button>
+    </div>
+
+    <!-- Main Card -->
+    <div class="w-full max-w-md glass-card p-8 rounded-2xl shadow-2xl text-center relative">
+      <!-- Back to Home -->
+      <a href="/" class="absolute top-2 left-2 px-3 py-1 text-sm text-teal-600 rounded-md hover:bg-teal-100 hover:text-teal-800 transition">
+        ← Home
+      </a>
+
+      <h2 class="text-2xl font-bold text-indigo-700 dark:text-indigo-300 mb-4">🔐 Verify Your Email</h2>
+      <p class="mb-2 text-sm text-gray-600 dark:text-gray-300">
+        We’ve sent a one-time password (OTP) to your email. Enter it below to verify and continue.
+      </p>
+
+      <!-- OTP Verification Form -->
+      <form method="POST" action="/confirm_account" class="space-y-4 mb-4">
+        <input 
+          type="text"
+          name="otp"
+          placeholder="Enter OTP" 
+          maxlength="6" 
+          pattern="\d{6}" 
+          inputmode="numeric" 
+          required
+          class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500" />
+        <button
+          class="w-full bg-teal-600 text-white py-2 rounded-xl font-semibold hover:bg-teal-700 transition">
+          Confirm Email & Create Account
+        </button>
+      </form>
+
+      <!-- Countdown -->
+      <p id="otpTimerMsg" class="text-sm text-slate-600 dark:text-slate-300 mb-2">
+        OTP expires in <span id="countdown" class="font-semibold text-indigo-600 dark:text-indigo-400">120</span> seconds
+      </p>
+
+      <!-- Resend OTP Button -->
+      <form method="POST" action="/resend_otp">
+        <button 
+          id="resendBtn" 
+          class="w-full py-2 px-4 mt-1 rounded-xl border border-indigo-500 text-indigo-600 dark:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed">
+            Resend OTP
+        </button>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <p class="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">
+              ✅ {{ messages[0] }}
+            </p>
+          {% endif %}
+        {% endwith %}
+
+      </form>
+    </div>
+
+    <!-- Timer Script -->
+    <script>
+      <!-- DEBUG: countdown = {{ countdown }} -->
+      let countdown = Number("{{ countdown | default(0) }}");
+      const countdownSpan = document.getElementById('countdown');
+      const resendBtn = document.getElementById('resendBtn');
+      const otpTimerMsg = document.getElementById('otpTimerMsg');
+
+      if (countdown > 0) {
+        countdownSpan.textContent = countdown;
+        resendBtn.disabled = true;
+
+        const timer = setInterval(() => {
+          countdown--;
+          countdownSpan.textContent = countdown;
+
+          if (countdown <= 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+            otpTimerMsg.innerHTML = `<span class="text-red-600 dark:text-red-400 font-medium">⚠️ OTP has expired. Please click "Resend OTP".</span>`;
+          }
+        }, 1000);
+      } else {
+        countdownSpan.textContent = "expired";
+        resendBtn.disabled = false;
+        otpTimerMsg.innerHTML = `<span class="text-red-600 dark:text-red-400 font-medium">⚠️ OTP has expired. Please click "Resend OTP".</span>`;
+      }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/session_checker.js') }}"></script>
+    <script>
+      setupSessionExpiry("{{ expires_at }}");
+    </script>
+
+  </body>
+</html>
